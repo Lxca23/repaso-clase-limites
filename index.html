@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salón de Matemáticas Interactivo</title>
+    <style>
+        /* Estilos del Salón de Clases */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: #d2b48c; 
+            background-image: 
+                linear-gradient(to bottom, #e3c193 70%, #8b5a2b 70%); 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Contenedor del Pizarrón */
+        .pizarrón-container {
+            position: relative;
+            width: 60%;
+            height: 55%;
+            background-color: #1e4d2b; 
+            border: 15px solid #5c3a21; 
+            border-radius: 4px;
+            box-shadow: 0px 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 10;
+        }
+
+        /* Detalles matemáticos de fondo */
+        .contenido-pizarrón {
+            color: rgba(255, 255, 255, 0.15);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.5rem;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            pointer-events: none;
+            line-height: 1.8;
+        }
+
+        /* Botón Central */
+        .btn-reproducir {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #1e4d2b;
+            background-color: #fff;
+            border: 3px solid #fff;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: transform 0.2s, background-color 0.2s;
+            z-index: 2;
+        }
+
+        .btn-reproducir:hover {
+            transform: scale(1.1);
+            background-color: #e6e6e6;
+        }
+
+        /* Contenedor del Video */
+        .video-container {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: #000;
+        }
+
+        #videoMatematicas {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Panel de controles */
+        .panel-controles {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .btn-control {
+            background: rgba(255, 255, 255, 0.85);
+            border: none;
+            padding: 12px 18px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-control:hover {
+            background: #fff;
+            transform: scale(1.05);
+        }
+
+        .btn-volumen {
+            background: #ffcc00;
+            color: #000;
+        }
+
+        .btn-volumen:hover {
+            background: #ffe066;
+        }
+
+        /* Pizarrón expandido */
+        .pizarrón-container.expandido {
+            width: 100vw;
+            height: 100vh;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="panel-controles" id="panelControles">
+        <button class="btn-control btn-volumen" onclick="forzarVolumenMaximo()">🔊 Forzar Volumen Máximo (100%)</button>
+        <button class="btn-control" onclick="encogerPizarron()">❌ Volver al Salón</button>
+    </div>
+
+    <div class="pizarrón-container" id="pizarron">
+        
+        <div class="contenido-pizarrón" id="decoracionTiza">
+            f(x) = x² + 2x + 1 <br>
+            π ≈ 3.1416 <br>
+            E = mc²
+        </div>
+
+        <button class="btn-reproducir" id="btnPlay" onclick="expandirPizarron()">▶ Ver Clase de Matemáticas</button>
+
+        <div class="video-container" id="videoContainer">
+            <div id="videoMatematicas"></div>
+        </div>
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <script>
+        const pizarron = document.getElementById('pizarron');
+        const videoContainer = document.getElementById('videoContainer');
+        const btnPlay = document.getElementById('btnPlay');
+        const panelControles = document.getElementById('panelControles');
+        const decoracionTiza = document.getElementById('decoracionTiza');
+        
+        let player;
+        let apiLista = false;
+
+        // Se ejecuta cuando la API de YouTube termina de cargar
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('videoMatematicas', {
+                height: '100%',
+                width: '100%',
+                videoId: 'FWeu1ZFN2SY', // Tu video de matemáticas
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 1,
+                    'rel': 0,
+                    'origin': window.location.origin // Crucial para GitHub Pages
+                },
+                events: {
+                    'onReady': () => { apiLista = true; }
+                }
+            });
+        }
+
+        function expandirPizarron() {
+            pizarron.classList.add('expandido');
+            btnPlay.style.display = 'none';
+            decoracionTiza.style.display = 'none';
+
+            setTimeout(() => {
+                videoContainer.style.display = 'block';
+                panelControles.style.display = 'flex';
+                
+                // Si la API está lista, reproduce y sube volumen
+                if (apiLista && player) {
+                    player.setVolume(100);
+                    player.playVideo();
+                }
+            }, 800);
+        }
+
+        function encogerPizarron() {
+            if (apiLista && player) {
+                player.pauseVideo();
+            }
+            
+            videoContainer.style.display = 'none';
+            panelControles.style.display = 'none';
+            pizarron.classList.remove('expandido');
+            
+            btnPlay.style.display = 'block';
+            decoracionTiza.style.display = 'block';
+        }
+
+        // Función del botón para obligar a YouTube a dar todo su volumen
+        function forzarVolumenMaximo() {
+            if (apiLista && player) {
+                player.unMute();
+                player.setVolume(100);
+                alert("¡Configurado! El volumen interno de YouTube está al 100%.");
+            }
+        }
+    </script>
+</body>
+</html>
