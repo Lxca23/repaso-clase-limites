@@ -86,13 +86,12 @@
             border: none;
         }
 
-        /* Panel de controles */
+        /* Panel de controles (Solo botón de cerrar) */
         .panel-controles {
             display: none;
             position: fixed;
             top: 20px;
             right: 20px;
-            gap: 15px;
             z-index: 100;
         }
 
@@ -113,15 +112,6 @@
             transform: scale(1.05);
         }
 
-        .btn-volumen {
-            background: #ffcc00;
-            color: #000;
-        }
-
-        .btn-volumen:hover {
-            background: #ffe066;
-        }
-
         /* Pizarrón expandido */
         .pizarrón-container.expandido {
             width: 100vw;
@@ -135,7 +125,6 @@
 <body>
 
     <div class="panel-controles" id="panelControles">
-        <button class="btn-control btn-volumen" onclick="forzarVolumenMaximo()">🔊 Forzar Volumen Máximo (100%)</button>
         <button class="btn-control" onclick="encogerPizarron()">❌ Volver al Salón</button>
     </div>
 
@@ -166,17 +155,16 @@
         let player;
         let apiLista = false;
 
-        // Se ejecuta cuando la API de YouTube termina de cargar
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('videoMatematicas', {
                 height: '100%',
                 width: '100%',
-                videoId: 'FWeu1ZFN2SY', // Tu video de matemáticas
+                videoId: '1x8MX9q1DtM', // <--- NUEVO ID DE TU VIDEO ACTUALIZADO
                 playerVars: {
                     'autoplay': 0,
-                    'controls': 1,
+                    'controls': 1, // Muestra la barra de volumen, pausa y tiempo de YouTube
                     'rel': 0,
-                    'origin': window.location.origin // Crucial para GitHub Pages
+                    'origin': window.location.origin
                 },
                 events: {
                     'onReady': () => { apiLista = true; }
@@ -193,9 +181,8 @@
                 videoContainer.style.display = 'block';
                 panelControles.style.display = 'flex';
                 
-                // Si la API está lista, reproduce y sube volumen
                 if (apiLista && player) {
-                    player.setVolume(100);
+                    player.setVolume(70); // Inicia a un volumen inicial moderado y agradable
                     player.playVideo();
                 }
             }, 800);
@@ -212,15 +199,6 @@
             
             btnPlay.style.display = 'block';
             decoracionTiza.style.display = 'block';
-        }
-
-        // Función del botón para obligar a YouTube a dar todo su volumen
-        function forzarVolumenMaximo() {
-            if (apiLista && player) {
-                player.unMute();
-                player.setVolume(100);
-                alert("¡Configurado! El volumen interno de YouTube está al 100%.");
-            }
         }
     </script>
 </body>
