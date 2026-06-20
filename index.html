@@ -20,13 +20,14 @@
             overflow: hidden;
         }
 
-        /* Contenedor del Pizarrón */
+        /* Contenedor del Pizarrón - Adaptable */
         .pizarrón-container {
             position: relative;
-            width: 60%;
-            height: 55%;
+            width: 85%; /* Más ancho en pantallas medianas/chicas */
+            max-width: 900px; /* Límite para que no se deforme en pantallas gigantes */
+            height: 50%;
             background-color: #1e4d2b; 
-            border: 15px solid #5c3a21; 
+            border: 12px solid #5c3a21; /* Marco ligeramente más delgado para pantallas chicas */
             border-radius: 4px;
             box-shadow: 0px 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.4);
             display: flex;
@@ -41,18 +42,18 @@
         .contenido-pizarrón {
             color: rgba(255, 255, 255, 0.15);
             font-family: 'Courier New', Courier, monospace;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             position: absolute;
-            top: 20px;
-            left: 20px;
+            top: 15px;
+            left: 15px;
             pointer-events: none;
-            line-height: 1.8;
+            line-height: 1.6;
         }
 
-        /* Botón Central */
+        /* Botón Central Adaptable */
         .btn-reproducir {
-            padding: 15px 30px;
-            font-size: 1.2rem;
+            padding: 12px 24px;
+            font-size: 1rem;
             font-weight: bold;
             color: #1e4d2b;
             background-color: #fff;
@@ -62,10 +63,11 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             transition: transform 0.2s, background-color 0.2s;
             z-index: 2;
+            text-align: center;
         }
 
         .btn-reproducir:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
             background-color: #e6e6e6;
         }
 
@@ -86,39 +88,75 @@
             border: none;
         }
 
-        /* Panel de controles (Solo botón de cerrar) */
+        /* Panel de controles */
         .panel-controles {
             display: none;
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 15px;
+            right: 15px;
             z-index: 100;
         }
 
         .btn-control {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.9);
             border: none;
-            padding: 12px 18px;
-            font-size: 1rem;
+            padding: 10px 16px;
+            font-size: 0.9rem;
             font-weight: bold;
             border-radius: 5px;
             cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            transition: background 0.2s, transform 0.1s;
         }
 
-        .btn-control:hover {
-            background: #fff;
-            transform: scale(1.05);
-        }
-
-        /* Pizarrón expandido */
+        /* Pizarrón expandido (Pantalla Completa) */
         .pizarrón-container.expandido {
             width: 100vw;
             height: 100vh;
+            max-width: 100vw;
             border: none;
             border-radius: 0;
             box-shadow: none;
+        }
+
+        /* =======================================================
+           MEDIA QUERIES (Aquí se hace la magia para celulares)
+           ======================================================= */
+        
+        /* Para Computadoras y Pantallas Grandes */
+        @media (min-width: 992px) {
+            .pizarrón-container {
+                width: 65%;
+                height: 55%;
+                border: 15px solid #5c3a21;
+            }
+            .contenido-pizarrón {
+                font-size: 1.5rem;
+            }
+            .btn-reproducir {
+                padding: 15px 30px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Para Celulares en posición vertical (Pantallas muy chicas) */
+        @media (max-width: 576px) {
+            .pizarrón-container {
+                width: 90%;
+                height: 40%;
+            }
+            .contenido-pizarrón {
+                font-size: 0.9rem; /* Fórmulas más chicas para que no se amontonen */
+                line-height: 1.4;
+            }
+            .btn-reproducir {
+                font-size: 0.9rem;
+                padding: 10px 20px;
+                width: 80%; /* Botón más cómodo para tocar con el dedo */
+            }
+            .btn-control {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
@@ -159,10 +197,10 @@
             player = new YT.Player('videoMatematicas', {
                 height: '100%',
                 width: '100%',
-                videoId: '1x8MX9q1DtM', // <--- NUEVO ID DE TU VIDEO ACTUALIZADO
+                videoId: '1x8MX9q1DtM', 
                 playerVars: {
                     'autoplay': 0,
-                    'controls': 1, // Muestra la barra de volumen, pausa y tiempo de YouTube
+                    'controls': 1, 
                     'rel': 0,
                     'origin': window.location.origin
                 },
@@ -182,7 +220,7 @@
                 panelControles.style.display = 'flex';
                 
                 if (apiLista && player) {
-                    player.setVolume(70); // Inicia a un volumen inicial moderado y agradable
+                    player.setVolume(70); 
                     player.playVideo();
                 }
             }, 800);
